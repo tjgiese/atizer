@@ -1,0 +1,25 @@
+#!/usr/bin/env python
+
+from atizer import *
+from atizer.dbase import *
+from targets import *
+
+class test(autoprog):
+    def __init__(self,basedir=None):
+        super(test,self).__init__( "test", basedir )
+        self.libs = [ tdbsc() ]
+        self.noinst = True
+        self.dist_noinst_SCRIPTS = [ "ade.xyz", "ade.2dbspl" ]
+
+
+targets = [ test(here()) ]
+subdirs = []
+package = autopackage("test",targets,subdirs)
+
+if __name__ == "__main__":
+    package.configure()
+
+
+
+
+

@@ -1,0 +1,66 @@
+#!/usr/bin/env python
+
+import os,sys,stat
+from atizer.utilities import *
+
+if len(sys.argv) != 1:
+    raise Exception("""
+
+Usage: autotool-init-python-package
+The *.py files in the current directory will be copied to $(prefix)/bin
+
+All subdirectories containing *.py files (e.g., "subdir") will be copied to $(pythondir)/subdir
+
+In this way, you can
+#!/usr/bin/env python
+import subdir
+""")
+
+name = "python_package_%s"%( os.path.basename(os.path.normpath(os.getcwd())) )
+
+contents = """#!/usr/bin/env python
+import os
+from atizer import *
+from atizer.dbase import *
+
+class %s(autoprog):
+    def __init__( self, srcdir=None ):
+        super( %s, self ).__init__( "%s", srcdir )
+
+        self.copyright_holder = "%s"
+        self.license = licenses.MIT
+
+        if len(self.sources) > 0 or len(self.headers) > 0:
+            print "python_module %s contains headers",self.headers
+            print "python_module %s contains sources",self.sources
+            raise Exception("Invalid python_module")
+        self.dist_bin_SCRIPTS = []
+        self.python_package = []
+        for py in recursive_find( "*.py", self.directory ):
+            p,f=os.path.split(py)
+            p = p.replace( os.path.abspath(os.getcwd()), "").lstrip(r"/")
+            if p == "":
+                if f != "__init__.py":
+                    self.dist_bin_SCRIPTS.append( py )
+            else:
+                self.python_package.append( py )
+
+package = autopackage(
+    "%s",
+    targets=[ %s( here() ) ],
+    subdirs=[],
+    version="0.1",
+    apiversion="0:0:0")
+
+if __name__ == "__main__":
+    package.configure()
+"""% tuple( [name]*3 + [get_user_fullname()] + [name]*4 )
+
+if os.path.exists("__init__.py"):
+    print contents
+else:
+    fh = file("__init__.py","w")
+    fh.write(contents)
+    fh.close()
+    st = os.stat('__init__.py')
+    os.chmod('__init__.py', st.st_mode | stat.S_IEXEC)

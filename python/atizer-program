@@ -1,0 +1,61 @@
+#!/usr/bin/env python
+
+import os,sys,stat
+from atizer.utilities import *
+
+if len(sys.argv) < 2 or len(sys.argv) > 2:
+    raise Exception("""
+
+Usage: autotool-init-program name
+where "name" is the name of the library you are creating
+""")
+
+name = sys.argv[1]
+
+contents = """#!/usr/bin/env python
+from atizer import *
+from atizer.dbase import *
+
+class %s(autoprog):
+    def __init__( self, srcdir=None ):
+        super( %s, self ).__init__( "%s", srcdir )
+
+        self.copyright_holder = "%s"
+        self.license = licenses.MIT
+
+        ## @brief List of autolib objects representing library dependencies
+        self.libs = []
+
+        ## @brief List of filenames to be distributed, but not installed
+        self.dist_noinst_SCRIPTS = []
+        self.EXTRA_DIST = []
+
+        ## @brief If True, then compile the target without installing it
+        #         (default False)
+        self.noinst = False
+
+        ## @brief If True, "make doxygen-doc" create documentation html
+        self.doxygen = False
+
+        # self.enable_openmp()
+        # self.enable_mpi()
+
+package = autopackage(
+    "%s",
+    targets=[ %s( here() ) ],
+    subdirs=[],
+    version="0.1",
+    apiversion="0:0:0")
+
+if __name__ == "__main__":
+    package.configure()
+"""% tuple( [name]*3 + [get_user_fullname()] + [name]*2 )
+
+if os.path.exists("__init__.py"):
+    print contents
+else:
+    fh = file("__init__.py","w")
+    fh.write(contents)
+    fh.close()
+    st = os.stat('__init__.py')
+    os.chmod('__init__.py', st.st_mode | stat.S_IEXEC)

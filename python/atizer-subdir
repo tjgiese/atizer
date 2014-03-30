@@ -1,0 +1,64 @@
+#!/usr/bin/env python
+
+import os,sys,stat
+
+
+
+if len(sys.argv) > 2:
+    raise Exception("""
+
+Usage: autotool-init-subdir name
+where "name" is the name of the library you are creating
+""")
+
+if len(sys.argv) == 2:
+    name = sys.argv[1]
+else:
+    name = os.path.basename(os.path.normpath(os.getcwd()))
+
+exclusions = ["build","local","doxygen-doc","distrib",".deps",".git","autom4te.cache","m4"]
+dirs = []
+for d in os.walk('.').next()[1]:
+    if d in exclusions:
+        sys.stderr.write("Skipping directory "+d+" based on its name\n")
+    else:
+        if os.path.exists( d + "/__init__.py" ):
+            dirs.append( d )
+        else:
+            sys.stderr.write("\nWARNING: Directory "+d+" is missing __init__.py\nSkipping directory "+d+"\n")
+        
+if len(dirs) < 1:
+    sys.stderr.write("""
+There are no subdirectories... skipping __init__.py generation
+
+""")
+    exit(1)
+
+contents = """#!/usr/bin/env python
+from atizer import *
+from atizer.dbase import *
+"""
+
+for d in dirs:
+    contents += "from %s import package as %s\n"%(d,d)
+
+contents +="""
+package = autopackage(
+    "%s",
+    targets=[],
+    subdirs=[%s],
+    version="0.1",
+    apiversion="0:0:0")
+
+if __name__ == "__main__":
+    package.configure()
+"""% ( name, ",".join( d for d in dirs ) )
+
+if os.path.exists("__init__.py"):
+    print contents
+else:
+    fh = file("__init__.py","w")
+    fh.write(contents)
+    fh.close()
+    st = os.stat('__init__.py')
+    os.chmod('__init__.py', st.st_mode | stat.S_IEXEC)
