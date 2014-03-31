@@ -673,7 +673,7 @@ AY_DEBUG_CXXFLAGS
 
     def __lt_init(self,fh):
         if self.has_library:
-            fh.write("AM_PROG_AR\nLT_INIT\n")
+            fh.write("m4_ifdef([AM_PROG_AR], [AM_PROG_AR])\nLT_INIT\n")
         if self.has_python_module or self.has_python:
             fh.write("AM_PATH_PYTHON\n")
 #        for t in self.compilable_targets:
