@@ -20,4 +20,5 @@ from .lapack import *
 from .rt import *
 from .fftw3 import *
 from .york import *
+from .nlopt import *
 
