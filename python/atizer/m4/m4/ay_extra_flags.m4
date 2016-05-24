@@ -77,7 +77,7 @@ dnl intel flags
 [-assume norealloc_lhs,nodummy_aliases,noprotect_parens],dnl
 [-std=c++0x], [-wd981,1419],dnl
 [-march=native], [-mtune=native], [-ansi], dnl
-[-pedantic-errors], [-Wall], [-Wextra] dnl
+[-Wall], [-Wextra] dnl
 ],
     [
       AY_CHECK_CXXFLAG([$OPT_CXXFLAGS flag],
@@ -186,7 +186,7 @@ AC_DEFUN([AY_DEBUG_CXXFLAGS],
     [dnl
 dnl intel flags
 [-g], [-ansi], [-ansi-alias], [-std=c++0x], [-warn all], [-debug all] [-traceback], [-wd981,1419],dnl
-[-pedantic-errors], [-Wall], [-Wextra], dnl
+[-Wall], [-Wextra], dnl
 [-ftree-vrp], [-fbounds-check], [-fstack-protector-all],[-Wformat],[-Wnarrowing]
 ],
     [
@@ -254,7 +254,7 @@ AC_DEFUN([AY_DEBUG_CFLAGS],
     [dnl
 dnl intel flags
 [-g], [-ansi], [-ansi-alias], [-std=c99], [-warn all], [-debug all] [-traceback], [-wd981,1419],dnl
-[-pedantic-errors], [-Wall], [-Wextra], dnl
+[-Wall], [-Wextra], dnl
 [-ftree-vrp], [-fbounds-check], [-fstack-protector-all],[-Wformat],[-Wnarrowing]
 ],
     [
