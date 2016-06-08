@@ -556,6 +556,9 @@ esac]
 
 AM_CONDITIONAL([WITH_MPI], [test x$with_mpi != xno])
 
+#if test x"$with_mpi" = xyes; then
+#  AC_SUBST([AM_CPPFLAGS],["-DWITH_MPI ${AM_CPPFLAGS}"])
+#fi
 
 AC_ARG_WITH(openmp,
 [AS_HELP_STRING([--with-openmp],

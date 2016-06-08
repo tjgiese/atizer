@@ -136,6 +136,9 @@ class autoprog(autotarget):
 #            fh.write("%sdir = $(PWD)\n"%(prog.name))
 #            fh.write("%s_PROGRAMS = %s\n"%( prog.name, prog.name ))
         else:
+#            if "_mpi" in target:
+#               fh.write("bin_PROGRAMS  = %s\n"%( target ))
+#            else:
             fh.write("bin_PROGRAMS += %s\n"%( target ))
         fh.write("%s_CPPFLAGS = %s $(AM_CPPFLAGS)\n"%(\
                 am_name,prog.cppflags ))

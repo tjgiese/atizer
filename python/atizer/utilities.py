@@ -30,7 +30,7 @@ class openmpinfo(object):
         self.var_default_value = "-l"+self.name
         # these are flags used when this library is NOT being compiled
         # i.e., something else is using this library as a dependency
-        self.cppflags = ""
+        self.cppflags = "-DWITH_OPENMP"
         self.ldflags = ""
         # this flags are used when this library IS being compiled
         self.cflags = "$(OPENMP_CFLAGS)"
@@ -47,7 +47,7 @@ class mpiinfo(object):
         # these are flags used when this library is NOT being compiled
         # i.e., something else is using this library as a dependency
         #self.cppflags = "-DMPI"
-        self.cppflags = ""
+        self.cppflags = "-DWITH_MPI"
         self.ldflags = ""
         # this flags are used when this library IS being compiled
         self.cflags = ""
