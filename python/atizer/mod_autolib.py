@@ -172,8 +172,8 @@ class autolib(autotarget):
             name = UnderscorePath( self.path_from_configure ) + name
 
         infos = [ info for dep,info in deps ]
-        cppflags = " ".join( [ dep.cppflags for dep in infos ] ) 
-        ldflags  = " ".join( [ dep.ldflags  for dep in infos ] ) 
+        cppflags = lib.cppflags + " " + " ".join( [ dep.cppflags for dep in infos ] ) 
+        ldflags  = lib.ldflags + " " + " ".join( [ dep.ldflags  for dep in infos ] ) 
 
         self.query_compiles_an_openmp_target()
         if self.compiles_an_openmp_target and self.openmp.var == self.serial.var and not self.python_module:
