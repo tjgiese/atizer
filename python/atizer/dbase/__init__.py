@@ -21,4 +21,6 @@ from .rt import *
 from .fftw3 import *
 from .york import *
 from .nlopt import *
+from .hdf5 import *
+from .netcdf import *
 
