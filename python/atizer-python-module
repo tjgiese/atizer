@@ -24,7 +24,7 @@ class %s(autolib):
         self.license = licenses.MIT
 
         ## @brief List of autolib objects representing library dependencies
-        self.libs = [ boost_python() ]
+        self.libs = [ boost_python(), python_devel("2.7") ]
 
         ## @brief List of filenames to be distributed, but not installed
         self.dist_noinst_SCRIPTS = []
