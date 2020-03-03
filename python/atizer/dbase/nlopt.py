@@ -5,7 +5,7 @@ class nlopt(autolib):
     def __init__(self):
         super( nlopt , self ).__init__( "nlopt" )
         self.serial.var = "NLOPT_LIBS"
-        self.serial.var_default_value = "-lnlopt_cxx"
+        self.serial.var_default_value = "-lnlopt"
         self.serial.name = "nlopt"
         self.serial.cppflags = ""
         self.serial.ldflags = ""

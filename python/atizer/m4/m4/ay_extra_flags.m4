@@ -76,7 +76,7 @@ dnl intel flags
 [-xhost], [-ftz], [-r8], [-align], [-no-prec-div],dnl
 [-assume norealloc_lhs,nodummy_aliases,noprotect_parens],dnl
 [-std=c++0x], [-wd981,1419],dnl
-[-march=native], [-mtune=native], [-ansi], dnl
+[-march=native], [-mtune=native], dnl
 [-Wall], [-Wextra] dnl
 ],
     [
@@ -185,7 +185,7 @@ AC_DEFUN([AY_DEBUG_CXXFLAGS],
   m4_foreach([flag], 
     [dnl
 dnl intel flags
-[-g], [-ansi], [-ansi-alias], [-std=c++0x], [-warn all], [-debug all] [-traceback], [-wd981,1419],dnl
+[-g], [-std=c++0x], [-warn all], [-debug all] [-traceback], [-wd981,1419],dnl
 [-Wall], [-Wextra], dnl
 [-ftree-vrp], [-fbounds-check], [-fstack-protector-all],[-Wformat],[-Wnarrowing]
 ],
@@ -253,7 +253,7 @@ AC_DEFUN([AY_DEBUG_CFLAGS],
   m4_foreach([flag], 
     [dnl
 dnl intel flags
-[-g], [-ansi], [-ansi-alias], [-std=c99], [-warn all], [-debug all] [-traceback], [-wd981,1419],dnl
+[-g], [-std=c99], [-warn all], [-debug all] [-traceback], [-wd981,1419],dnl
 [-Wall], [-Wextra], dnl
 [-ftree-vrp], [-fbounds-check], [-fstack-protector-all],[-Wformat],[-Wnarrowing]
 ],

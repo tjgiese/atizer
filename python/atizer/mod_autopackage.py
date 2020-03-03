@@ -167,6 +167,8 @@ class autopackage(object):
             fh.write("dist_noinst_SCRIPTS =")
             if self == self.root:
                 fh.write(" ./ac-aux/autodel.sh ./ac-aux/autogen.sh")
+                for s in self.dist_noinst_SCRIPTS:
+                    fh.write(" %s"%(s))
             fh.write("\n")
             fh.write("dist_bin_SCRIPTS =\n")
             fh.write("EXTRA_DIST =\n")
@@ -639,6 +641,7 @@ AC_LANG_POP([Fortran])
 AC_SUBST([OPENMP_FCFLAGS])
 AY_OPT_FCFLAGS
 AY_DEBUG_FCFLAGS
+AC_PROG_F77
 
 """)
 
