@@ -49,7 +49,7 @@ if __name__ == "__main__":
 """% tuple( [name]*5 )
 
 if os.path.exists("__init__.py"):
-    print contents
+    print(contents)
 else:
     fh = file("__init__.py","w")
     fh.write(contents)

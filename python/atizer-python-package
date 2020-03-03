@@ -31,14 +31,14 @@ class %s(autoprog):
         self.license = licenses.MIT
 
         if len(self.sources) > 0 or len(self.headers) > 0:
-            print "python_module %s contains headers",self.headers
-            print "python_module %s contains sources",self.sources
+            print("python_module %s contains headers",self.headers)
+            print("python_module %s contains sources",self.sources)
             raise Exception("Invalid python_module")
         self.dist_bin_SCRIPTS = []
         self.python_package = []
         for py in recursive_find( "*.py", self.directory ):
             p,f=os.path.split(py)
-            p = p.replace( os.path.abspath(os.getcwd()), "").lstrip(r"/")
+            p = p.replace( os.path.abspath(here()), "").lstrip(r"/")
             if p == "":
                 if f != "__init__.py":
                     self.dist_bin_SCRIPTS.append( py )
@@ -57,7 +57,7 @@ if __name__ == "__main__":
 """% tuple( [name]*3 + [get_user_fullname()] + [name]*4 )
 
 if os.path.exists("__init__.py"):
-    print contents
+    print(contents)
 else:
     fh = file("__init__.py","w")
     fh.write(contents)
