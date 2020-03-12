@@ -4,7 +4,7 @@ import sys,os,stat,inspect,fnmatch
 from glob import *
 from collections import defaultdict as ddict
 
-import m4
+from .m4 import *
 
 from .utilities import *
 from .mod_autolib import autolib

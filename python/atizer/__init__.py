@@ -3,6 +3,6 @@
 #__all__ = [ "base" ]
 
 from .base import *
-import m4
-import licenses
+from .m4 import *
+from .licenses import *
 

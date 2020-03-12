@@ -4,7 +4,7 @@ from .utilities import *
 from .f90deps import f90deps as f90deps
 from .f90deps import printf90deps as printf90deps
 from .f90deps import replace_ext as replace_ext
-import licenses
+from . import licenses
 import copy
 
 class autotarget(object):
@@ -162,7 +162,7 @@ class autotarget(object):
             sys.stderr.write("""\n\n\n\nTARGET %s in directory %s should set self.copyright_holder = "John Doe" in its class constructor.  You can adjust the license by setting self.license = license.<type> where <type> is a function defined in the license package\n\n\n\n"""%(self.name,self.directory))
         if not lfile is None:
             if not os.path.exists(lfile):
-                fh = file(lfile,"w")
+                fh = open(lfile,"w")
                 fh.write("The following files are provided using the license described below:\n")
                 fh.write("%s\n\n\n"%( " ".join( PrependPathToFiles(self.path_from_configure, self.sources+self.headers+self.python_package+self.dist_bin_SCRIPTS )) ))
                 fh.write( self.license( self.copyright_holder ) )

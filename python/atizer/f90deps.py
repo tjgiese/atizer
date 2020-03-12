@@ -46,9 +46,9 @@ def f90deps(srcs,directory=None):
     for src in srcs:
         info[src] = f90depinfo()
         if directory is not None and directory != "":
-            fh = file(directory + "/" + src,"r")
+            fh = open(directory + "/" + src,"r")
         else:
-            fh = file(src,"r")
+            fh = open(src,"r")
 
         liter = iter(fh)
         while True:
@@ -108,4 +108,4 @@ def printf90deps(info,directory=None,extension="$(OBJEXT)",fileprefix=""):
     return result
 
 if __name__ == "__main__":
-    print printf90deps( f90deps(sys.argv[1:]), None, "o" )
+    print(printf90deps( f90deps(sys.argv[1:]), None, "o" ))

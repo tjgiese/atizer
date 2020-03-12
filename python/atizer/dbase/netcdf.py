@@ -1,6 +1,6 @@
 from ..base import *
 from ..m4 import *
-from hdf5 import hdf5
+from .hdf5 import hdf5
 import copy
 
 class netcdf(autolib):

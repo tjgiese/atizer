@@ -2,9 +2,9 @@
 from ..base import *
 from ..m4 import *
 from .. import licenses
-from rt import rt
-from lapack import lapack
-from fftw3 import fftw3
+from .rt import rt
+from .lapack import lapack
+from .fftw3 import fftw3
 import copy
 
 

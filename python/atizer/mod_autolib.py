@@ -42,7 +42,7 @@ class autolib(autotarget):
         Writes the contents of a Makefile.am to a file handle
         If no file handle is given, then it is written to Makefile.am
         """
-        if fh == None: fh = file("Makefile.am","w")
+        if fh == None: fh = open("Makefile.am","w")
         self.determine_languages()
         am_name = "lib%s"%(self.serial.name)
         if not self.recursive_make:
@@ -104,12 +104,12 @@ class autolib(autotarget):
 
                     hdir = hdir.lstrip(r"/")
                 else:
-                    print "Error locating header"
-                    print "h   =",h
-                    print "path=",os.path.abspath(h)
-                    print "exis?",os.path.isfile( os.path.abspath(h) )
-                    print "fdir=",fdir
-                    print "sdir=",sdir
+                    print("Error locating header")
+                    print("h   =",h)
+                    print("path=",os.path.abspath(h))
+                    print("exis?",os.path.isfile( os.path.abspath(h) ))
+                    print("fdir=",fdir)
+                    print("sdir=",sdir)
 # remove the directory from the path to the header
                     raise Exception("Hmpf")
                 hdirs[hdir].append(h)

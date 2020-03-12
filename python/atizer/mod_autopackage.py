@@ -3,9 +3,9 @@
 import inspect,sys,os,stat,glob,subprocess,copy
 from collections import defaultdict as ddict
 from collections import OrderedDict as odict
-import m4
-from mod_autolib import autolib
-from mod_autoprog import autoprog
+from . import m4
+from .mod_autolib import autolib
+from .mod_autoprog import autoprog
 from .utilities import *
 
 class autopackage(object):
@@ -127,10 +127,10 @@ class autopackage(object):
         self.__determine_languages()
         self.__inspect_targets()
         if Print:
-            print "package.name ",self.name
-            print "        all_child_targets",[ x for x in self.all_child_targets ]
-            print "        all_targets      ",[ x for x in self.all_targets ]
-            print "        all_child_deps   ",[ x for x in self.all_child_deps ]
+            print("package.name ",self.name)
+            print("        all_child_targets",[ x for x in self.all_child_targets ])
+            print("        all_targets      ",[ x for x in self.all_targets ])
+            print("        all_child_deps   ",[ x for x in self.all_child_deps ])
         if self == self.root:
             for t in self.all_targets:
                 self.all_targets[t].print_license()
@@ -158,7 +158,7 @@ class autopackage(object):
         close = False
         if fh == None:
             close = True
-            fh = file(self.directory + "/Makefile.am","w")
+            fh = open(self.directory + "/Makefile.am","w")
 
         self.__init_recursion(True)
 
@@ -274,7 +274,7 @@ debug: all
         close = False
         if fh == None:
             close = True
-            fh = file(self.directory + "/configure.ac","w")
+            fh = open(self.directory + "/configure.ac","w")
 
         self.__init_recursion(False)
 
@@ -484,7 +484,7 @@ DX_INIT_DOXYGEN([$PACKAGE_NAME])
         f = "./" + self.path_from_makefile + "/Doxyfile"
         f = f.replace(r"//",r"/")
         subprocess.call("doxygen -g %s"%(f),shell=True)
-        df = file(f,"a")
+        df = open(f,"a")
         df.write("""
 DOT_CLEANUP            = YES
 GENERATE_HTML          = $(GENERATE_HTML)
@@ -805,7 +805,7 @@ fi
         if not os.path.exists(self.directory + "/ac-aux"):
             os.mkdir(self.directory + "/ac-aux")
         fname =  self.directory + "/ac-aux/autodel.sh"
-        agen = file(fname,"w")
+        agen = open(fname,"w")
         agen.write("""#!/bin/bash
 if [ -f Makefile ]; then
     make distclean
@@ -830,7 +830,7 @@ rm -f $(find . -name "*.pyc")
         if not os.path.exists(self.directory + "/ac-aux"):
             os.mkdir(self.directory + "/ac-aux")
         fname = self.directory + "/ac-aux/autogen.sh"
-        agen = file(fname,"w")
+        agen = open(fname,"w")
         agen.write("""#!/bin/sh -e
 maketar() {
     echo ""
@@ -876,7 +876,7 @@ maketar %s
     ################################################################
 
     def __make_sh(self):
-        agen = file("make.sh","w")
+        agen = open("make.sh","w")
         agen.write("""#!/bin/bash
 set -e
 set -u

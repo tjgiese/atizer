@@ -8,8 +8,8 @@ class pyatizer(autoprog):
         super( pyatizer, self ).__init__( "atizer", srcdir )
         self.copyright_holder = "Timothy J. Giese"
         if len(self.sources) > 0 or len(self.headers) > 0:
-            print "python_module atizer contains headers",self.headers
-            print "python_module atizer contains sources",self.sources
+            print("python_module atizer contains headers",self.headers)
+            print("python_module atizer contains sources",self.sources)
             raise Exception("Invalid python_module")
         self.dist_bin_SCRIPTS = recursive_find("atizer-*",self.directory)
         self.python_package = []
