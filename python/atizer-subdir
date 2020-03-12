@@ -40,7 +40,12 @@ from atizer.dbase import *
 """
 
 for d in dirs:
-    contents += "from %s import package as %s\n"%(d,d)
+    contents += """
+try:
+   from . %s import package as %s
+except:
+   from %s import package as %s
+""""%(d,d,d,d)
 
 contents +="""
 package = autopackage(

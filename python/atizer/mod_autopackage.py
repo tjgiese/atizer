@@ -42,8 +42,10 @@ class autopackage(object):
         if directory is None:
             filename = inspect.getfile(sys._getframe(1))
             self.directory = os.path.dirname(os.path.realpath(filename))
+            print("directory for %s is %s"%(name,self.directory))
         else:
             self.directory = os.path.realpath(directory)
+            print("directory for %s is %s"%(name,self.directory))
         self.path_from_configure = self.directory
         self.path_from_makefile  = self.directory
         # the name of the package - the affects the name of the
@@ -87,6 +89,7 @@ class autopackage(object):
         self.subdirs = {}
         self.parent = None
         for subdir in subdirs:
+            print("%s has subdir "%(self.name),subdir.directory)
             self.subdirs[ subdir.directory ] = subdir
             self.subdirs[ subdir.directory ].parent = self        
         self.__root(self)
@@ -119,6 +122,7 @@ class autopackage(object):
 
     def __init_recursion(self,Print=False):
         if self == self.root:
+            #print(self.name," is root")
             self.__all_child_targets()
             self.__all_targets()
             self.__all_child_deps()
@@ -206,6 +210,7 @@ class autopackage(object):
 
         for target in self.targets:
             target.recursive_make = self.recursive_make
+            #print("recursive am_write for target ",target.name," from ",self.name)
             target.am_write( fh )
 
         if self.recursive_make:
@@ -213,8 +218,10 @@ class autopackage(object):
                 self.subdirs[d].recursive_make = self.recursive_make
                 self.subdirs[d].am_write()
         else:
+            #print("package %s has subdirs:"%(self.name),[d for d in self.subdirs])
             for d in self.subdirs:
                 self.subdirs[d].recursive_make = self.recursive_make
+                #print("recursive am_write for subdir ",self.subdirs[d].name," (%s) from "%(d),self.name)
                 self.subdirs[d].am_write(fh)
 
         if self != self.root and not self.recursive_make:
