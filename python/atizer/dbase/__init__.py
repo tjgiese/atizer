@@ -23,4 +23,6 @@ from .york import *
 from .nlopt import *
 from .hdf5 import *
 from .netcdf import *
+from .umfpack import *
+
 
