@@ -88,6 +88,38 @@ void dgesdd_(const char *jobz, const int *m, const int *n,double *a, const int *
 	)
 
    AS_IF([test "x$HAVE_LAPACK" = "xno"],
+         [AC_MSG_CHECKING(openblas LIBS)]
+         [saved_libs="$LIBS"]
+         [LIBS="$LIBS -lopenblas $FCLIBS"]
+         [
+            AC_LINK_IFELSE(
+               [AC_LANG_PROGRAM(  
+[
+void dgesdd_(const char *jobz, const int *m, const int *n,double *a, const int *lda, double *s,double *u, const int *ldu,double *vt, const int *ldvt, double *work, const int *lwork, int *iwork, int *info);
+],
+[
+  double * p = 0;
+  double work = 0.;
+  int lwork = -1;
+  int iwork = 0;
+  int info = 0;
+  int M,N;
+  dgesdd_("A",&M,&N,p,&M,p,p,&M,p,&N,&work,&lwork,&iwork,&info);
+] 
+                               )],
+               [LAPACK_LIBS="-lopenblas"] 
+               [HAVE_LAPACK=yes]
+               [AC_MSG_RESULT([yes])],
+               [HAVE_LAPACK=no]
+               [AC_MSG_RESULT([no])]
+            )
+         ]
+         [LIBS="$saved_libs"]
+        )
+
+
+
+   AS_IF([test "x$HAVE_LAPACK" = "xno"],
          [AC_MSG_CHECKING(-llapack -lblas LIBS)]
          [saved_libs="$LIBS"]
 	 [LIBS="$LIBS -llapack -lblas $FCLIBS"]
