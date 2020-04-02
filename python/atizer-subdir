@@ -18,7 +18,9 @@ else:
 
 exclusions = ["build","local","doxygen-doc","distrib",".deps",".git","autom4te.cache","m4"]
 dirs = []
-for d in os.walk('.').next()[1]:
+it = iter(os.walk('.'))
+search_dirs = next(it)[1]
+for d in search_dirs:
     if d in exclusions:
         sys.stderr.write("Skipping directory "+d+" based on its name\n")
     else:
@@ -45,7 +47,7 @@ try:
    from . %s import package as %s
 except:
    from %s import package as %s
-""""%(d,d,d,d)
+"""%(d,d,d,d)
 
 contents +="""
 package = autopackage(
@@ -60,9 +62,9 @@ if __name__ == "__main__":
 """% ( name, ",".join( d for d in dirs ) )
 
 if os.path.exists("__init__.py"):
-    print contents
+    print(contents)
 else:
-    fh = file("__init__.py","w")
+    fh = open("__init__.py","w")
     fh.write(contents)
     fh.close()
     st = os.stat('__init__.py')

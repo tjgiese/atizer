@@ -54,7 +54,7 @@ if __name__ == "__main__":
 if os.path.exists("__init__.py"):
     print(contents)
 else:
-    fh = file("__init__.py","w")
+    fh = open("__init__.py","w")
     fh.write(contents)
     fh.close()
     st = os.stat('__init__.py')
