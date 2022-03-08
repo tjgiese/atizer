@@ -688,7 +688,7 @@ AY_DEBUG_CXXFLAGS
         if self.has_library:
             fh.write("m4_ifdef([AM_PROG_AR], [AM_PROG_AR])\nLT_INIT\n")
         if self.has_python_module or self.has_python:
-            fh.write("AM_PATH_PYTHON\n")
+            fh.write("AM_PATH_PYTHON([3.4])\n")
 #        for t in self.compilable_targets:
 #            if isinstance(self.compilable_targets[t],autolib):
 #                fh.write("LT_INIT\n")
