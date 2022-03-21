@@ -293,7 +293,10 @@ debug: all
         fh.write( m4.ax_macro("ax_prog_cxx_mpi.m4") + "\n" )
         fh.write( m4.ax_macro("ax_prog_fc_mpi.m4") + "\n" )
         fh.write( m4.ax_macro("ay_extra_flags.m4") + "\n" )
+        if self.has_python_module or self.has_python:
+            fh.write( m4.ax_macro("python.m4") + "\n" )
 
+        
         self.__ac_init(fh)
         if self.doxygen:
             self.__ac_doxygen(fh)
