@@ -2,8 +2,9 @@ from ..base import *
 from ..m4 import *
 import copy
 class umfpack(autolib):
-    def __init__(self):
+    def __init__(self,optional=False):
         super( umfpack , self ).__init__( "umfpack" )
+        self.optional = optional
         self.serial.var = "UMFPACK_LIBS"
         self.serial.var_default_value = "-lumfpack -lamd"
         self.serial.name = "umfpack"

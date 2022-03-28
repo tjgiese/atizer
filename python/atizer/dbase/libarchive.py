@@ -4,9 +4,10 @@ from .hdf5 import hdf5
 import copy
 
 class libarchive(autolib):
-    def __init__(self):
+    def __init__(self,optional=False):
         super( libarchive , self ).__init__( "libarchive" )
-        self.libs = [ hdf5() ]
+        self.optional=optional
+        self.libs = [ hdf5(self.optional) ]
         self.serial.var = "LIBARCHIVE_LIBS"
         self.serial.var_default_value = "-larchive"
         self.serial.name = "libarchive"

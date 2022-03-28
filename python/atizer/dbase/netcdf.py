@@ -4,8 +4,9 @@ from .hdf5 import hdf5
 import copy
 
 class netcdf(autolib):
-    def __init__(self):
+    def __init__(self,optional=False):
         super( netcdf , self ).__init__( "netcdf" )
+        self.optional=optional
         self.libs = [ hdf5() ]
         self.serial.var = "NETCDF_LIBS"
         self.serial.var_default_value = "-lnetcdf_c++ -lnetcdf"

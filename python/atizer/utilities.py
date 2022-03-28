@@ -134,6 +134,28 @@ def RecursiveLibs(self):
         a = [ x for x in a if not x.name in names ] + this
     return a
 
+def GetOptionalDictFromLib(self,names):
+    if not self.optional or self.name not in names:
+        names[self.name] = self.optional
+    for lib in self.libs:
+        names = GetOptionalDictFromLib(lib,names)
+    return names
+
+#def SetOptionalFlags(self):
+#    names = GetOptionalDict(self,{})
+#    self.set_optional_recursively(names)
+
+def GetOptionalDictFromTarget(self,names):
+    for t in self.targets:
+        if t.optional:
+            t.set_optional_recursively(True)
+        names = GetOptionalDictFromLib(t,names)
+    for subdir in self.subdirs:
+        d = self.subdirs[subdir]
+        names = GetOptionalDictFromTarget(d,names)
+    return names
+
+
 
 def RemoveBasePathFromFilePath(basepath,filepath):
     """

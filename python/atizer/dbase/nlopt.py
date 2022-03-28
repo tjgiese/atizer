@@ -2,8 +2,9 @@ from ..base import *
 from ..m4 import *
 import copy
 class nlopt(autolib):
-    def __init__(self):
+    def __init__(self,optional=False):
         super( nlopt , self ).__init__( "nlopt" )
+        self.optional=optional
         self.serial.var = "NLOPT_LIBS"
         self.serial.var_default_value = "-lnlopt"
         self.serial.name = "nlopt"

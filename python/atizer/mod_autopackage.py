@@ -126,6 +126,7 @@ class autopackage(object):
             self.__all_child_targets()
             self.__all_targets()
             self.__all_child_deps()
+            self.__dep_is_optional(names=None)
             self.__path_from_configure()
             self.__path_from_makefile()
         self.__determine_languages()
@@ -135,6 +136,11 @@ class autopackage(object):
             print("        all_child_targets",[ x for x in self.all_child_targets ])
             print("        all_targets      ",[ x for x in self.all_targets ])
             print("        all_child_deps   ",[ x for x in self.all_child_deps ])
+            if self == self.root:
+                print("\nIs this an optional component of the package?")
+                for name in self.dep_is_optional:
+                    print("%32s = %s"%(name,self.dep_is_optional[name]))
+                
         if self == self.root:
             for t in self.all_targets:
                 self.all_targets[t].print_license()
@@ -1063,6 +1069,18 @@ fi
                 if not dep.can_compile():
                     self.all_child_deps[ name ] = dep
 
+    def __dep_is_optional(self,names=None):
+        """
+        Recursively set  dep_is_optional, which is a dict of dependency
+        names, whose bool values indicate if the package is optional
+        """
+        if names is None:
+            self.dep_is_optional = GetOptionalDictFromTarget(self,{})
+        else:
+            self.dep_is_optional = names
+        for subdir in self.subdirs:
+            d = self.subdirs[subdir]
+            d.__dep_is_optional(names=self.dep_is_optional)
 
 
     ################################################################

@@ -2,8 +2,9 @@ from ..base import *
 from ..m4 import *
 import copy
 class fftw3(autolib):
-    def __init__(self):
+    def __init__(self,optional=False):
         super( fftw3 , self ).__init__( "fftw3" )
+        self.optional=False
         self.serial.var = "FFTW3_LIBS"
         self.serial.var_default_value = "-lfftw3"
         self.serial.name = "fftw3"

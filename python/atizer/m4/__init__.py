@@ -30,9 +30,16 @@ def m4_generic_cxx_serial_conftest(self,fh,header,preamble,body):
     fh.write(
         m4_define_new_env(
             var,var_default,"Serial "+name+" libraries") )
+
+    
+    fh.write("atp_has_all_components=yes\n")
+    
     # foo/foo.hpp
     if header is not None:
-        fh.write( m4_check_header_or_die(header,name) )
+        if self.optional:
+            fh.write( m4_check_header(header,ok="",fail="atp_has_all_components=no") )
+        else:
+            fh.write( m4_check_header_or_die(header,name) )
 
     # function foo in -lfoo
     fh.write(
@@ -50,9 +57,13 @@ def m4_generic_cxx_serial_conftest(self,fh,header,preamble,body):
 #            "${"+var+"}", # link to these libraries
             preamble, # header
             body) # body
-        +
-        m4_if_failed( 
-            m4_error("""
+        )
+    if self.optional:
+        fh.write(m4_if_failed("atp_has_all_components=no"))
+    else:
+        fh.write(
+            m4_if_failed( 
+                m4_error("""
 
 FAILED TO LINK AGAINST ${"""+var+"""}
 
@@ -73,6 +84,20 @@ archive file, e.g., libfoo.a
     the appropriate /path/to/lib
 """) ) )
 
+
+    if self.optional:
+        fh.write("\nAM_CONDITIONAL([HAVE_%s],[test \"x$atp_has_all_components\" = \"xyes\"])\n"%(var))
+        fh.write("""
+
+AM_CONDITIONAL([HAVE_%s],[test "x$atp_has_all_components" = "xyes"])
+
+AS_IF( [test "x$atp_has_all_components" = "xyes"],
+[
+AC_SUBST([AM_CPPFLAGS],["-DHAVE_%s ${AM_CPPFLAGS}"])
+])
+"""%(var,var))
+
+        
 #            m4_error(
 #                "Link tests failed against "+name)) )
 
@@ -93,9 +118,16 @@ def m4_generic_cxx_openmp_conftest(self,fh,header,preamble,body):
     fh.write(
         m4_define_new_env(
             var,var_default,"OpenMP "+name+" libraries") )
+
+    fh.write("atp_has_all_components=yes\n")
+
+    
     # foo/foo.hpp
     if header is not None:
-        fh.write( m4_check_openmp_header_or_die(header,name) )
+        if self.optional:
+            fh.write( m4_check_openmp_header(header,ok="",fail="atp_has_all_components=no") )
+        else:
+            fh.write( m4_check_openmp_header_or_die(header,name) )
 
     # function foo in -lfoo
     fh.write(
@@ -113,9 +145,14 @@ def m4_generic_cxx_openmp_conftest(self,fh,header,preamble,body):
             linkage,
             preamble, # header
             body) # body
-        +
-        m4_if_failed(
-             m4_error("""
+        )
+    
+    if self.optional:
+        fh.write(m4_if_failed("atp_has_all_components=no"))
+    else:
+        fh.write(
+            m4_if_failed(
+                m4_error("""
 
 FAILED TO LINK AGAINST ${"""+var+"""}
 
@@ -135,6 +172,19 @@ archive file, e.g., libfoo.a
     Upon loading a module, you can use "module show" to help find
     the appropriate /path/to/lib
 """) ) )
+
+
+    if self.optional:
+        fh.write("\nAM_CONDITIONAL([HAVE_%s],[test \"x$atp_has_all_components\" = \"xyes\"])\n"%(var))
+        fh.write("""
+
+AM_CONDITIONAL([HAVE_%s],[test "x$atp_has_all_components" = "xyes"])
+
+AS_IF( [test "x$atp_has_all_components" = "xyes"],
+[
+AC_SUBST([AM_CPPFLAGS],["-DHAVE_%s ${AM_CPPFLAGS}"])
+])
+"""%(var,var))
 
 
 
@@ -184,6 +234,18 @@ def m4_if_failed(do_if_failed):
 %s
 ]) dnl failbit was on
 """%(do_if_failed)
+
+
+def m4_ifelse_success(do_if_success,do_if_failed):
+    return """AS_IF( [test "x$atp_test_failed" = "xno"],
+[
+%s
+],
+[
+%s
+]) dnl failbit was on
+"""%(do_if_success,do_if_failed)
+
 
 
 

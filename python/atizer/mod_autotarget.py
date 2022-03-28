@@ -23,6 +23,7 @@ class autotarget(object):
         # PWD/src/*.c PWD/src/*.cpp  PWD/src/*.f90 ...etc
         # and all subdirectories, recursively
         # PWD/src/*/*.c PWD/src/*/*/*.c ...
+        self.optional = False
         self.copyright_holder = None
         self.license = licenses.MIT
         self.directory = directory
@@ -167,3 +168,17 @@ class autotarget(object):
                 fh.write("%s\n\n\n"%( " ".join( PrependPathToFiles(self.path_from_configure, self.sources+self.headers+self.python_package+self.dist_bin_SCRIPTS )) ))
                 fh.write( self.license( self.copyright_holder ) )
                 fh.close()
+
+
+    def set_optional_recursively(self,optional):
+        self.optional = optional
+        for lib in self.libs:
+            lib.set_optional_recursively(optional)
+
+    def set_optional_recursively_from_dict(self,names):
+        if self.name in names:
+            self.optional = names[self.name]
+        else:
+            raise Exception("Could not find key %s in %s"%(self.name,str(names)))
+        for lib in self.libs:
+            lib.set_optional_recursively_from_dict(names)
