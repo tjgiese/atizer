@@ -72,7 +72,8 @@ class autolib(autotarget):
         if len(self.sources + self.headers) > 0:
 
             f90depinfo = f90deps( self.sources, self.directory )
-
+            
+            
             if self.recursive_make:
                 sources = PrependPathToFiles( self.path_from_makefile, self.sources + self.headers )
             else:
@@ -136,6 +137,7 @@ class autolib(autotarget):
 
         fh.write("\n\nBUILT_SOURCES += ")
         for src in f90depinfo:
+            #print("src %s provides %s"%(src,[mod for mod in f90depinfo[src].provides]))
             for mod in f90depinfo[src].provides:
                 m = replace_ext( mod.lower(), ".mod" )
                 fh.write(" "+m)

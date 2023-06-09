@@ -12,8 +12,9 @@ class f90depinfo(object):
 def getline( liter ):
     line = ""
     while len(line.strip()) < 1:
-        line = liter.next().upper()
-        line = re.sub(r"^(.*?)!.*$",r"\1",line)
+        if liter:
+            line = next(liter).upper()
+            line = re.sub(r"^(.*?)!.*$",r"\1",line)
     line = re.sub(r"ONLY.*$","",line)
     line = line.strip()
     if line[-1] == "&":
@@ -45,11 +46,16 @@ def f90deps(srcs,directory=None):
     info = ddict()
     for src in srcs:
         info[src] = f90depinfo()
+        fname=src
         if directory is not None and directory != "":
+            fname=directory + "/" + src
             fh = open(directory + "/" + src,"r")
         else:
             fh = open(src,"r")
 
+        if not fh:
+            raise Exception("Failed to open %s"%(fname))
+            
         liter = iter(fh)
         while True:
             try:
@@ -63,7 +69,7 @@ def f90deps(srcs,directory=None):
                 elif has_mod is not None:
                     info[src].provides[ has_mod.group(1).strip() ] = None
             except Exception as e:
-#                print "exception: ",e
+            #    print("exception: ",e)
                 break
     modules = ddict()
     for src in srcs:
