@@ -182,7 +182,7 @@ def PrependPathToFiles(path,files):
     return a
 
 def UnderscorePath(path):
-    s = re.sub(r"/","_",path) + "_"
+    s = re.sub(r"-","_",re.sub(r"/","_",path)) + "_"
     s = s.lstrip("_")
     return s
 

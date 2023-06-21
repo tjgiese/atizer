@@ -11,6 +11,8 @@ class autoprog(autotarget):
     def __init__(self,name,directory=None):
         autotarget.__init__(self,name,directory)
         self.name = self.__class__.__name__
+        if name is not None:
+            self.name = name
 
     def am_write(self,fh=None):
         """
@@ -24,7 +26,7 @@ class autoprog(autotarget):
         if ( self.compiles_an_openmp_target or self.links_to_an_openmp_target ) and self.openmp.var == self.serial.var:
             self.enable_openmp()
 
-        am_name = "%s"%(self.serial.name)
+        am_name = "%s"%(self.serial.name).replace("-","_")
         if not self.recursive_make:
             am_name = UnderscorePath( self.path_from_configure ) + am_name
 
@@ -79,7 +81,8 @@ class autoprog(autotarget):
                 sources = PrependPathToFiles( self.path_from_configure, self.sources + self.headers )
 
 
-
+            if self.has_python_embed:
+                fh.write("\nif PYTHON_USE\n")
             self.__am_write(fh,self.serial,serials,sources)
             if self.openmp.name != self.serial.name:
                 fh.write("\nif WITH_OPENMP\n")
@@ -89,11 +92,16 @@ class autoprog(autotarget):
                 fh.write("\nif WITH_MPI\n")
                 self.__am_write(fh,self.mpi,mpis,ssource)
                 fh.write("\nendif\n\n")
+            if self.has_python_embed:
+                fh.write("\nendif\n")
 
         fh.write( "\n" )
 
         if len(self.sources + self.headers) > 0:
 
+            if self.has_python_embed:
+                fh.write("\nif PYTHON_USE\n")
+                
             if self.recursive_make:
                 #            fh.write( printf90deps( f90deps( self.sources, self.directory ) ) )
                 fh.write( printf90deps( f90depinfo, None ) )
@@ -118,6 +126,10 @@ class autoprog(autotarget):
                 f = replace_ext( f, ".$(OBJEXT)" ).lstrip(r"/")
                 if len( f90depinfo[src].provides ) > 0:
                     fh.write(" : " + f + "\n")
+
+            if self.has_python_embed:
+                fh.write("\nendif\n")
+                
         # print the extra make rules
         fh.write("%s\n"%(self.extra_make_rules))
 
@@ -125,10 +137,12 @@ class autoprog(autotarget):
 
     def __am_write(self,fh,prog,deps,sources):
         target = prog.name
-        am_name = prog.name
+        am_name = prog.name.replace("-","_")
         if not self.recursive_make:
             target = PrependPathToFiles( self.path_from_configure, [target] )[0]
             am_name = UnderscorePath( self.path_from_configure ) + am_name
+
+            
         fh.write("\n")
         if self.noinst:
             fh.write("noinst_PROGRAMS += %s\n"%( target ))
@@ -142,14 +156,26 @@ class autoprog(autotarget):
             fh.write("bin_PROGRAMS += %s\n"%( target ))
         fh.write("%s_CPPFLAGS = %s $(AM_CPPFLAGS)\n"%(\
                 am_name,prog.cppflags ))
-        if len(prog.cflags) > 0:
-            fh.write("%s_CFLAGS = %s\n"%(am_name,prog.cflags))
-        if len(prog.cxxflags) > 0:
-            fh.write("%s_CXXFLAGS = %s\n"%(am_name,prog.cxxflags))
-        if len(prog.fcflags) > 0:
-            fh.write("%s_FCFLAGS = %s\n"%(am_name,prog.fcflags))
+        if len(prog.cflags) > 0 or self.has_python_embed:
+            cflags = prog.cflags
+            if self.has_python_embed:
+                cflags += " $(PYTHON_CSPEC)"
+            fh.write("%s_CFLAGS = %s\n"%(am_name,cflags))
+        if len(prog.cxxflags) > 0 or self.has_python_embed:
+            cxxflags = prog.cxxflags
+            if self.has_python_embed:
+                cxxflags += " $(PYTHON_CSPEC)"
+            fh.write("%s_CXXFLAGS = %s\n"%(am_name,cxxflags))
+        if len(prog.fcflags) > 0 or self.has_python_embed:
+            fcflags = prog.fcflags
+            if self.has_python_embed:
+                fcflags += " $(PYTHON_CSPEC)"
+            fh.write("%s_FCFLAGS = %s\n"%(am_name,fcflags))
 
-        fh.write("%s_LDFLAGS = $(STATIC_LINK_LDFLAGS) $(AM_LDFLAGS)\n"%( am_name ))
+        ldflags = "$(STATIC_LINK_LDFLAGS) $(AM_LDFLAGS)"
+        if self.has_python_embed:
+            ldflags = "$(AM_LDFLAGS) $(PYTHON_LSPEC)"
+        fh.write("%s_LDFLAGS = %s\n"%( am_name, ldflags ))
 
         is_mixed_lang = False
         if self.has_fortran:

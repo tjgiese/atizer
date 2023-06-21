@@ -301,7 +301,9 @@ debug: all
         fh.write( m4.ax_macro("ay_extra_flags.m4") + "\n" )
         if self.has_python_module or self.has_python:
             fh.write( m4.ax_macro("python.m4") + "\n" )
-
+        if self.has_python_embed:
+            fh.write( m4.ax_macro("ax_python_embed.m4") )
+            
         
         self.__ac_init(fh)
         if self.doxygen:
@@ -696,8 +698,17 @@ AY_DEBUG_CXXFLAGS
     def __lt_init(self,fh):
         if self.has_library:
             fh.write("m4_ifdef([AM_PROG_AR], [AM_PROG_AR])\nLT_INIT\n")
-        if self.has_python_module or self.has_python:
-            fh.write("AM_PATH_PYTHON([3.4])\n")
+        if self.has_python_embed:
+            fh.write("AM_PATH_PYTHON([3.7])\n")
+            fh.write("AX_PYTHON_DEFAULT( )\n")
+            fh.write("AX_PYTHON_ENABLE( )\n")
+            fh.write("AX_PYTHON_WITH( )\n")
+            fh.write("AX_PYTHON_PATH( )\n")
+            fh.write("AX_PYTHON_VERSION_ENSURE( [3.7] )\n")
+            fh.write("AX_PYTHON_CSPEC\n")
+            fh.write("AX_PYTHON_LSPEC\n")
+        elif self.has_python_module or self.has_python or self.has_python_embed:
+            fh.write("AM_PATH_PYTHON([3.7])\n")
 #        for t in self.compilable_targets:
 #            if isinstance(self.compilable_targets[t],autolib):
 #                fh.write("LT_INIT\n")
@@ -1097,6 +1108,7 @@ fi
         """
         self.has_library = False
         self.has_python_module = False
+        self.has_python_embed = False
         self.has_program = False
         for t in self.all_targets:
             dep = self.all_targets[t]
@@ -1106,7 +1118,8 @@ fi
                     self.has_python_module = True
             elif isinstance(dep,autoprog):
                 self.has_program = True
-
+            if dep.has_python_embed:
+                self.has_python_embed = True
 
 
     ################################################################

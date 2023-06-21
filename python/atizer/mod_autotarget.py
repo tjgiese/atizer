@@ -59,6 +59,8 @@ class autotarget(object):
         self.openmp = serialinfo(name)
         self.mpi    = serialinfo(name)
 
+        # set to true if this includes embedded python
+        self.set_python_embed(False)
 
         # extra makefile rules that are verbatim added to the makefile
         self.extra_make_rules = ""
@@ -92,6 +94,10 @@ class autotarget(object):
         
     def enable_mpi(self):
         self.mpi = mpiinfo(self.name)
+
+    def set_python_embed(self,has):
+        self.has_python_embed = has
+        
 
     def can_compile(self):
         return ( len(self.sources) > 0 or len(self.headers) > 0 or len(self.dist_bin_SCRIPTS) > 0 or len(self.python_package) > 0 )
