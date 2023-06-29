@@ -222,46 +222,51 @@ AC_DEFUN([AX_PYTHON_ENABLE],
 AC_DEFUN([AX_PYTHON_CSPEC],
 [
     AC_ARG_VAR( [PYTHON], [Python Executable Path] )
+    AC_ARG_VAR( [PYTHON_CSPEC], [The include flags used to link with python. Usually this is the ouput of "python3-config --includes"] )
     if test -n "$PYTHON"
     then
-        ax_python_prefix=`${PYTHON} -c "import sys; print(sys.prefix)"`
-        if test -z "$ax_python_prefix"
-        then
-            AC_MSG_ERROR([Python Prefix is not known])
-        fi
-        ax_python_execprefix=`${PYTHON} -c "import sys; print(sys.exec_prefix)"`
-        ax_python_version=`$PYTHON -c "import sys; print(sys.version[[:3]])"`
-        tmp_python_exe=`$PYTHON -c "import sys; print(sys.executable)"`
-	tmp_python_conf=${tmp_python_exe}-config
-	if test -x "${tmp_python_conf}"; then
-           ax_python_includespec=`${tmp_python_conf} --includes`
-	   ax_python_ccshared=`${PYTHON} -c "import distutils.sysconfig; print(distutils.sysconfig.get_config_var('CFLAGSFORSHARED'))"`
-           ax_python_cspec="${ax_python_ccshared} ${ax_python_includespec}"
-           AC_SUBST([PYTHON_CSPEC], [${ax_python_cspec}])
-           AC_MSG_NOTICE([PYTHON_CSPEC=${ax_python_cspec}])
-        else
-           tmp_include="${ax_python_prefix}/include/python${ax_python_version}"
-	   if test -d "${tmp_include}"; then
-              ax_python_includespec="-I${tmp_include}"
-	   else
-	      tmp_include="${ax_python_prefix}/include/python${ax_python_version}m"
+        if test "x$PYTHON_CSPEC" = "x"; then
+           ax_python_prefix=`${PYTHON} -c "import sys; print(sys.prefix)"`
+           if test -z "$ax_python_prefix"
+           then
+               AC_MSG_ERROR([Python Prefix is not known])
+           fi
+           ax_python_execprefix=`${PYTHON} -c "import sys; print(sys.exec_prefix)"`
+           ax_python_version=`$PYTHON -c "import sys; print(sys.version[[:3]])"`
+           tmp_python_exe=`$PYTHON -c "import sys; print(sys.executable)"`
+   	   tmp_python_conf=${tmp_python_exe}-config
+	   if test -x "${tmp_python_conf}"; then
+              ax_python_includespec=`${tmp_python_conf} --includes`
+ 	      ax_python_ccshared=`${PYTHON} -c "import distutils.sysconfig; print(distutils.sysconfig.get_config_var('CFLAGSFORSHARED'))"`
+              ax_python_cspec="${ax_python_ccshared} ${ax_python_includespec}"
+              AC_SUBST([PYTHON_CSPEC], [${ax_python_cspec}])
+              AC_MSG_NOTICE([PYTHON_CSPEC=${ax_python_cspec}])
+           else
+              tmp_include="${ax_python_prefix}/include/python${ax_python_version}"
 	      if test -d "${tmp_include}"; then
                  ax_python_includespec="-I${tmp_include}"
 	      else
-                 AC_MSG_NOTICE([COULD NOT LOCATE Python.h DISABLING PYTHON])
-                 ax_python_use=false
-                 AM_CONDITIONAL(PYTHON_USE, test x"$ax_python_use" = x"true")
-	      fi
-            fi
-           if test x"$python_prefix" != x"$python_execprefix"; then
-               ax_python_execspec="-I${ax_python_execprefix}/include/python${ax_python_version}"
-               ax_python_includespec="${ax_python_includespec} $ax_python_execspec"
-           fi
-           ax_python_ccshared=`${PYTHON} -c "import distutils.sysconfig; print(distutils.sysconfig.get_config_var('CFLAGSFORSHARED'))"`
-           ax_python_cspec="${ax_python_ccshared} ${ax_python_includespec}"
-           AC_SUBST([PYTHON_CSPEC], [${ax_python_cspec}])
-           AC_MSG_NOTICE([PYTHON_CSPEC=${ax_python_cspec}])
-	fi
+	         tmp_include="${ax_python_prefix}/include/python${ax_python_version}m"
+	         if test -d "${tmp_include}"; then
+                    ax_python_includespec="-I${tmp_include}"
+	         else
+                    AC_MSG_NOTICE([COULD NOT LOCATE Python.h DISABLING PYTHON])
+                    ax_python_use=false
+                    AM_CONDITIONAL(PYTHON_USE, test x"$ax_python_use" = x"true")
+	         fi
+              fi
+              if test x"$python_prefix" != x"$python_execprefix"; then
+                  ax_python_execspec="-I${ax_python_execprefix}/include/python${ax_python_version}"
+                  ax_python_includespec="${ax_python_includespec} $ax_python_execspec"
+              fi
+              ax_python_ccshared=`${PYTHON} -c "import distutils.sysconfig; print(distutils.sysconfig.get_config_var('CFLAGSFORSHARED'))"`
+              ax_python_cspec="${ax_python_ccshared} ${ax_python_includespec}"
+              AC_SUBST([PYTHON_CSPEC], [${ax_python_cspec}])
+              AC_MSG_NOTICE([PYTHON_CSPEC=${ax_python_cspec}])
+	   fi
+       else
+          AC_MSG_NOTICE([PYTHON_CSPEC=${PYTHON_CSPEC}])
+       fi
     fi
 ])
 
@@ -292,17 +297,18 @@ AC_DEFUN([AX_PYTHON_INSIST],
 AC_DEFUN([AX_PYTHON_LSPEC],
 [
     AC_ARG_VAR( [PYTHON], [Python Executable Path] )
+    AC_ARG_VAR( [PYTHON_LSPEC], [The flags used to link with python. Usually this is the ouput of "python3-config --ldflags"] )
     if test -n "$PYTHON"
     then
-    
-    tmp_python_exe=`$PYTHON -c "import sys; print(sys.executable)"`
-    tmp_python_conf=${tmp_python_exe}-config
-    if test -x "${tmp_python_conf}"; then
-       ax_python_lspec=`${tmp_python_conf} --ldflags`
-       AC_SUBST([PYTHON_LSPEC], [${ax_python_lspec}])
-       AC_MSG_NOTICE([PYTHON_LSPEC=${ax_python_lspec}])  	
-    else
-        AX_PYTHON_RUN([
+       if test "x$PYTHON_LSPEC" = "x"; then
+          tmp_python_exe=`$PYTHON -c "import sys; print(sys.executable)"`
+          tmp_python_conf=${tmp_python_exe}-config
+          if test -x "${tmp_python_conf}"; then
+             ax_python_lspec=`${tmp_python_conf} --ldflags`
+             AC_SUBST([PYTHON_LSPEC], [${ax_python_lspec}])
+             AC_MSG_NOTICE([PYTHON_LSPEC=${ax_python_lspec}])  	
+          else
+             AX_PYTHON_RUN([
 import sys
 import distutils.sysconfig
 strUseFrameWork = "--enable-framework"
@@ -337,10 +343,13 @@ else:
         strLinkSpec += " -F%s" % (strLibFW)
 strLinkSpec += " %s" % (dictConfig.get('LINKFORSHARED'))
 print(strLinkSpec)
-        ])
-        AC_SUBST([PYTHON_LSPEC], [${ax_python_output}])
-        AC_MSG_NOTICE([PYTHON_LSPEC=${ax_python_output}])
-    fi
+           ])
+             AC_SUBST([PYTHON_LSPEC], [${ax_python_output}])
+             AC_MSG_NOTICE([PYTHON_LSPEC=${ax_python_output}])
+          fi
+       else
+          AC_MSG_NOTICE([PYTHON_LSPEC=${PYTHON_LSPEC}])
+       fi
     fi
 ])
 
