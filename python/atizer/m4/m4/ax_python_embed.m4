@@ -297,14 +297,24 @@ AC_DEFUN([AX_PYTHON_INSIST],
 AC_DEFUN([AX_PYTHON_LSPEC],
 [
     AC_ARG_VAR( [PYTHON], [Python Executable Path] )
-    AC_ARG_VAR( [PYTHON_LSPEC], [The flags used to link with python. Usually this is the ouput of "python3-config --ldflags"] )
+    AC_ARG_VAR( [PYTHON_LSPEC], [The flags used to link with python. For python versions >= 3.8, this is the ouput of "python3-config --ldflags --embed". For versions <= 3.7, it is "python3-config --ldflags".  If configuration command reports linkage to libintl.so, then manually set the PYTHON_LSPEC variable without "-lintl"] )
     if test -n "$PYTHON"
     then
        if test "x$PYTHON_LSPEC" = "x"; then
           tmp_python_exe=`$PYTHON -c "import sys; print(sys.executable)"`
           tmp_python_conf=${tmp_python_exe}-config
           if test -x "${tmp_python_conf}"; then
-             ax_python_lspec=`${tmp_python_conf} --ldflags`
+               AX_PYTHON_VERSION_CHECK( 3.8, 
+                     [ AC_MSG_RESULT([yes]) ]
+                     [ ax_python_lspec=`${tmp_python_conf} --ldflags --embed | sed -e "s@-lintl@@"` ], 
+                     [ AC_MSG_RESULT([no]) ]
+                     [ ax_python_lspec=`${tmp_python_conf} --ldflags | sed -e "s@-lintl@@"` ] )
+##################################
+# for versions 3.8 and higher
+#             ax_python_lspec=`${tmp_python_conf} --ldflags --embed | sed -e "s@-lintl@@"`
+# for versions 3.7 or lower
+#             ax_python_lspec=`${tmp_python_conf} --ldflags | sed -e "s@-lintl@@"`
+#################################
              AC_SUBST([PYTHON_LSPEC], [${ax_python_lspec}])
              AC_MSG_NOTICE([PYTHON_LSPEC=${ax_python_lspec}])  	
           else
